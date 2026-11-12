@@ -1,0 +1,78 @@
+# Flujo temporal: toma las capturas de evidencia del README y se retira cuando ya estan en docs/capturas.
+name: Evidencias para el README
+
+on:
+  workflow_run:
+    workflows: ["CI — Pruebas y Cobertura"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  capturas:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          java-version: "21"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Ejecutar mvn verify guardando la salida
+        id: verify
+        continue-on-error: true
+        run: |
+          mkdir -p evidencias
+          set -o pipefail
+          mvn -B verify --no-transfer-progress 2>&1 | tee evidencias/mvn-verify.log
+
+      - name: Arrancar con mvn spring-boot:run y H2 vacia (checkpoint del Paso 4)
+        if: steps.verify.outcome == 'success'
+        run: |
+          mvn -B --no-transfer-progress spring-boot:run > evidencias/arranque.log 2>&1 &
+          timeout 150 bash -c 'until grep -q "Started RecordatoriosCitasServiceApplication" evidencias/arranque.log; do sleep 2; done'
+          pkill -f RecordatoriosCitasServiceApplication || true
+          pkill -f spring-boot:run || true
+
+      - name: Tomar capturas
+        if: steps.verify.outcome == 'success'
+        env:
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          REPO: ${{ github.repository }}
+        run: |
+          python3 .github/evidencias/paginas.py
+          mkdir -p /tmp/pw && cd /tmp/pw && npm init -y >/dev/null && npm install --silent playwright@1.49.1
+          npx playwright install --with-deps chromium
+          cd "$GITHUB_WORKSPACE" && NODE_PATH=/tmp/pw/node_modules node .github/evidencias/capturar.js
+          cp target/site/jacoco/jacoco.csv evidencias/
+
+      - name: Generar el Maven Wrapper con el plugin oficial
+        if: always()
+        run: |
+          mvn -B -N --no-transfer-progress wrapper:wrapper -Dmaven=3.9.9
+          ./mvnw -v
+          mkdir -p evidencias/wrapper/.mvn/wrapper
+          cp mvnw mvnw.cmd evidencias/wrapper/
+          cp .mvn/wrapper/maven-wrapper.properties evidencias/wrapper/.mvn/wrapper/
+
+      - name: Publicar en la rama evidencias
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          mkdir -p evidencias/reportes
+          cp target/surefire-reports/*.txt evidencias/reportes/ 2>/dev/null || true
+          echo "verify=${{ steps.verify.outcome }} commit=${{ github.sha }}" > evidencias/estado.txt
+          cd evidencias
+          git init -q -b evidencias
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A && git commit -q -m "Evidencias del CI"
+          git push -f "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git" evidencias
