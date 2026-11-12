@@ -1,0 +1,45 @@
+<!doctype html><meta charset='utf-8'><style>
+body{margin:0;background:#0d1117;font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#c9d1d9}
+.barra{background:#161b22;padding:10px 18px;color:#8b949e;border-bottom:1px solid #30363d;font-family:system-ui,sans-serif}
+pre{margin:0;padding:18px;white-space:pre-wrap}
+.ok{color:#3fb950}.info{color:#58a6ff}.exito{color:#3fb950;font-weight:bold}
+table{border-collapse:collapse;margin:18px;font-family:system-ui,sans-serif;color:#c9d1d9}
+td,th{padding:4px 14px;text-align:left;border-bottom:1px solid #21262d}
+h2{font-family:system-ui,sans-serif;margin:18px 18px 0;font-size:16px;color:#e6edf3}
+</style><div class='barra'>mvn -B verify --no-transfer-progress  (GitHub Actions, ubuntu-24.04, JDK 21)</div><pre>[INFO] Running com.clinica.recordatorios.service.CitaReminderServiceImplTest
+<span class="ok">[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.296 s -- in com.clinica.recordatorios.service.CitaReminderServiceImplTest</span>
+[INFO] Running com.clinica.recordatorios.repository.CitaRepositoryTest
+<span class="ok">[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.950 s -- in com.clinica.recordatorios.repository.CitaRepositoryTest</span>
+[INFO] Running com.clinica.recordatorios.channel.SmsReminderChannelTest
+<span class="ok">[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.045 s -- in com.clinica.recordatorios.channel.SmsReminderChannelTest</span>
+[INFO] Running com.clinica.recordatorios.channel.ReminderChannelFactoryImplTest
+<span class="ok">[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.031 s -- in com.clinica.recordatorios.channel.ReminderChannelFactoryImplTest</span>
+[INFO] Running com.clinica.recordatorios.CitaReminderServiceIntegrationTest
+<span class="ok">[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.036 s -- in com.clinica.recordatorios.CitaReminderServiceIntegrationTest</span>
+
+[INFO] Results:
+[INFO] 
+<span class="ok">[INFO] Tests run: 18, Failures: 0, Errors: 0, Skipped: 0</span>
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.4.2:jar (default-jar) @ recordatorios-citas-service ---
+[INFO] Building jar: /home/runner/work/sanchez-post1-u9-patrones/sanchez-post1-u9-patrones/target/recordatorios-citas-service-0.0.1-SNAPSHOT.jar
+[INFO] 
+[INFO] --- spring-boot:3.3.13:repackage (repackage) @ recordatorios-citas-service ---
+[INFO] Loaded 50 auto-discovered prefixes for remote repository ow2-snapshot (prefixes-ow2-snapshot.txt)
+[INFO] Replacing main artifact /home/runner/work/sanchez-post1-u9-patrones/sanchez-post1-u9-patrones/target/recordatorios-citas-service-0.0.1-SNAPSHOT.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to /home/runner/work/sanchez-post1-u9-patrones/sanchez-post1-u9-patrones/target/recordatorios-citas-service-0.0.1-SNAPSHOT.jar.original
+[INFO] 
+[INFO] --- jacoco:0.8.13:report (reporte) @ recordatorios-citas-service ---
+[INFO] Loading execution data file /home/runner/work/sanchez-post1-u9-patrones/sanchez-post1-u9-patrones/target/jacoco.exec
+[INFO] Analyzed bundle &#x27;recordatorios-citas-service&#x27; with 9 classes
+[INFO] 
+[INFO] --- jacoco:0.8.13:check (umbral-de-cobertura) @ recordatorios-citas-service ---
+[INFO] Loading execution data file /home/runner/work/sanchez-post1-u9-patrones/sanchez-post1-u9-patrones/target/jacoco.exec
+[INFO] Analyzed bundle &#x27;recordatorios-citas-service&#x27; with 9 classes
+[INFO] All coverage checks have been met.
+[INFO] ------------------------------------------------------------------------
+<span class="exito">[INFO] BUILD SUCCESS</span>
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  12.975 s
+[INFO] Finished at: 2026-11-12T05:33:11Z</pre>

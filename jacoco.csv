@@ -1,0 +1,10 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+recordatorios-citas-service,com.clinica.recordatorios.service,CitaReminderServiceImpl,0,96,0,2,0,24,0,6,0,5
+recordatorios-citas-service,com.clinica.recordatorios.service,CitaNoEncontradaException,0,5,0,0,0,2,0,1,0,1
+recordatorios-citas-service,com.clinica.recordatorios.channel.gateway,TwilioNotificadorSmsGateway,18,0,0,0,3,0,2,0,2,0
+recordatorios-citas-service,com.clinica.recordatorios.config,ClockConfig,0,5,0,0,0,2,0,2,0,2
+recordatorios-citas-service,com.clinica.recordatorios.config,CanalUrgenteConfig,0,8,0,0,0,2,0,2,0,2
+recordatorios-citas-service,com.clinica.recordatorios.channel,EmailReminderChannel,0,19,0,0,0,3,0,2,0,2
+recordatorios-citas-service,com.clinica.recordatorios.channel,SmsReminderChannel,0,13,0,0,0,5,0,2,0,2
+recordatorios-citas-service,com.clinica.recordatorios.channel,ReminderChannelFactoryImpl,0,20,0,2,0,7,0,3,0,2
+recordatorios-citas-service,com.clinica.recordatorios.domain,CanalNotificacion,0,15,0,0,0,2,0,1,0,1
