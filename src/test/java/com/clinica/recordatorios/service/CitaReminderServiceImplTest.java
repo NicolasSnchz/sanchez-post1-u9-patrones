@@ -37,6 +37,9 @@ class CitaReminderServiceImplTest {
     @Mock
     private ReminderChannel canalSmsMock;
 
+    @Mock
+    private ReminderChannel canalUrgenteMock;
+
     // Fake: deliberadamente NO se mockea con Mockito. Clock.fixed(...) es una implementacion
     // real y completa de java.time.Clock, solo que con el instante congelado.
     private final Clock clockFijo =
@@ -46,8 +49,8 @@ class CitaReminderServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        citaReminderService =
-            new CitaReminderServiceImpl(citaRepository, reminderChannelFactory, clockFijo);
+        citaReminderService = new CitaReminderServiceImpl(
+            citaRepository, reminderChannelFactory, canalUrgenteMock, clockFijo);
     }
 
     @Test
