@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -140,5 +141,47 @@ class CitaReminderServiceImplTest {
         assertEquals(0, enviados);
         verifyNoInteractions(reminderChannelFactory);
         verify(citaRepository, never()).save(any());
+    }
+
+    @Test
+    void enviarRecordatorioUrgente_citaExistente_usaCanalUrgenteInyectado() {
+        Cita cita = new Cita(5L, "Luis Pena", "3001234567",
+            LocalDateTime.of(2026, 8, 10, 10, 30), CanalNotificacion.SMS, false);
+        when(citaRepository.findById(5L)).thenReturn(Optional.of(cita));
+
+        citaReminderService.enviarRecordatorioUrgente(5L);
+
+        verify(canalUrgenteMock, times(1)).enviar(eq(cita), contains("URGENTE"));
+        verify(citaRepository).save(cita);
+        assertTrue(cita.isRecordatorioEnviado());
+    }
+
+    @Test
+    void enviarRecordatorioUrgente_gatewayFalla_noMarcaComoEnviado() {
+        // Esta prueba era imposible antes del refactor: no habia ningun punto
+        // donde sustituir el canal por un mock que simule el fallo del gateway.
+        Cita cita = new Cita(6L, "Marta Ruiz", "3009876543",
+            LocalDateTime.of(2026, 8, 10, 10, 30), CanalNotificacion.SMS, false);
+        when(citaRepository.findById(6L)).thenReturn(Optional.of(cita));
+        doThrow(new RuntimeException("Gateway de SMS no disponible"))
+            .when(canalUrgenteMock).enviar(any(), anyString());
+
+        RuntimeException error = assertThrows(RuntimeException.class,
+            () -> citaReminderService.enviarRecordatorioUrgente(6L));
+
+        assertEquals("Gateway de SMS no disponible", error.getMessage());
+        verify(citaRepository, never()).save(any());
+        assertFalse(cita.isRecordatorioEnviado());
+    }
+
+    @Test
+    void enviarRecordatorioUrgente_citaInexistente_lanzaCitaNoEncontradaException() {
+        when(citaRepository.findById(99L)).thenReturn(Optional.empty());
+
+        CitaNoEncontradaException error = assertThrows(CitaNoEncontradaException.class,
+            () -> citaReminderService.enviarRecordatorioUrgente(99L));
+
+        assertEquals("Cita no encontrada: 99", error.getMessage());
+        verifyNoInteractions(canalUrgenteMock);
     }
 }
