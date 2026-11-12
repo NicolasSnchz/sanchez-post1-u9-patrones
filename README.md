@@ -16,6 +16,16 @@ Microservicio en Spring Boot que busca las citas médicas de las próximas 24 ho
 
 A la pregunta del Paso 5 («¿existe una implementación real y completa en la librería estándar que se comporte igual que en producción?») la respuesta es **sí** para el reloj y **no** para los otros dos, y eso es justo lo que separa el fake de los mocks.
 
+## Parte 2: diagnóstico antes del refactor
+
+`enviarRecordatorioUrgente(Long citaId)` funciona, pero no se puede probar en aislamiento. El problema está en la línea 52 de [`CitaReminderServiceImpl`](src/main/java/com/clinica/recordatorios/service/CitaReminderServiceImpl.java#L52):
+
+```java
+ReminderChannel canalUrgente = new SmsReminderChannel(new TwilioNotificadorSmsGateway());
+```
+
+El canal y el gateway se construyen con `new` dentro del método, así que la prueba no tiene ningún punto donde entregar un doble. No hay forma de simular que el proveedor de SMS falla para comprobar que la cita no queda marcada como enviada, y cada ejecución de la prueba intentaría mandar un SMS de verdad. `enviarRecordatoriosPendientes()` sí se puede probar porque recibe la fábrica por constructor y el canal sale de ella, no de un `new`. Se podría interceptar ese `new` con `Mockito.mockConstruction()`, pero eso esconde el problema de diseño en vez de resolverlo: lo que falta es aplicar inversión de dependencias.
+
 ## Ejecutar las pruebas
 
 ```bash
